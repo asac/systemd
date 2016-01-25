@@ -772,7 +772,7 @@ int shall_restore_state(void);
  * Normal qsort requires base to be nonnull. Here were require
  * that only if nmemb > 0.
  */
-static inline void qsort_safe(void *base, size_t nmemb, size_t size, comparison_fn_t compar) {
+static inline void qsort_safe(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *)) {
         if (nmemb <= 1)
                 return;
 

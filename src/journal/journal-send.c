@@ -25,12 +25,12 @@
 #include <stddef.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <printf.h>
 
 #define SD_JOURNAL_SUPPRESS_LOCATION
 
 #include "sd-journal.h"
 #include "util.h"
+#include "parse-printf-format.h"
 #include "socket-util.h"
 #include "memfd-util.h"
 

@@ -896,6 +896,10 @@ libbasic_la_SOURCES = \
 	src/basic/copy.c \
 	src/basic/copy.h
 
+if !HAVE_PRINTF_H
+libbasic_la_SOURCES += src/basic/parse-printf-format.c
+endif
+
 nodist_libbasic_la_SOURCES = \
 	src/basic/errno-from-name.h \
 	src/basic/errno-to-name.h \

@@ -21,6 +21,7 @@
 ***/
 
 #include <linux/filter.h>
+#include <netinet/ether.h>
 #include <linux/if_ether.h>
 
 #include "socket-util.h"

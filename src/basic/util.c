@@ -3373,6 +3373,13 @@ int in_group(const char *name) {
         return in_gid(gid);
 }
 
+/* Don't fail if the standard library
+ * doesn't provide brace expansion */
+
+#ifndef GLOB_BRACE
+#define GLOB_BRACE 0
+#endif
+
 int glob_exists(const char *path) {
         _cleanup_globfree_ glob_t g = {};
         int k;

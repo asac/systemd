@@ -55,6 +55,11 @@
 #include <termios.h>
 #include <unistd.h>
 
+/* If sys/ioctl.h doesn't provide TIOCSIG use the kernel header */
+#ifndef TIOCSIG
+#include <asm/ioctls.h>
+#endif
+
 #include "barrier.h"
 #include "macro.h"
 #include "ring.h"

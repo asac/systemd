@@ -273,6 +273,8 @@ AC_SEARCH_LIBS([dlsym], [dl], [], [AC_MSG_ERROR([*** Dynamic linking loader libr
 AC_CHECK_HEADERS([sys/capability.h], [], [AC_MSG_ERROR([*** POSIX caps headers not found])])
 AC_CHECK_HEADERS([linux/btrfs.h], [], [])
 AC_CHECK_HEADERS([linux/memfd.h], [], [])
+AC_CHECK_HEADERS([printf.h], [], [])
+AM_CONDITIONAL(HAVE_PRINTF_H, [test "x$ac_cv_header_printf_h" = xyes])
 
 # unconditionally pull-in librt with old glibc versions
 AC_SEARCH_LIBS([clock_gettime], [rt], [], [])
@@ -283,10 +285,13 @@ AC_SEARCH_LIBS([cap_init], [cap], [], [AC_MSG_ERROR([*** POSIX caps library not 
 CAP_LIBS="$LIBS"
 AC_SUBST(CAP_LIBS)
 
+AC_CHECK_FUNCS([random_r])
 AC_CHECK_FUNCS([memfd_create])
 AC_CHECK_FUNCS([__secure_getenv secure_getenv])
-AC_CHECK_DECLS([gettid, pivot_root, name_to_handle_at, setns, getrandom, renameat2, kcmp, LO_FLAGS_PARTSCAN],
+AC_CHECK_DECLS([gettid, pivot_root, canonicalize_file_name, name_to_handle_at, strndupa, setns, getrandom, renameat2, kcmp, LO_FLAGS_PARTSCAN],
                [], [], [[
+#include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/mount.h>

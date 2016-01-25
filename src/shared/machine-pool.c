@@ -23,6 +23,7 @@
 #include <sys/vfs.h>
 #include <sys/statvfs.h>
 #include <sys/mount.h>
+#include <sys/file.h>
 
 #include "util.h"
 #include "process-util.h"

@@ -22,6 +22,7 @@
 ***/
 
 #include <stdint.h>
+#include <sys/types.h>
 
 struct strbuf {
         char *buf;

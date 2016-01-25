@@ -82,8 +82,10 @@ struct sd_ipv4ll {
         usec_t defend_window;
         int next_wakeup_valid;
         be32_t address;
+#ifdef HAVE_RANDOM_R
         struct random_data *random_data;
         char *random_data_state;
+#endif
         /* External */
         be32_t claimed_address;
         struct ether_addr mac_addr;
@@ -142,18 +144,24 @@ static sd_ipv4ll *ipv4ll_stop(sd_ipv4ll *ll, int event) {
 
 static int ipv4ll_pick_address(sd_ipv4ll *ll, be32_t *address) {
         be32_t addr;
-        int r;
-        int32_t random;
 
         assert(ll);
         assert(address);
+#ifdef HAVE_RANDOM_R
         assert(ll->random_data);
+#endif
 
         do {
-                r = random_r(ll->random_data, &random);
+#ifdef HAVE_RANDOM_R
+                int32_t value;
+                int r = random_r(ll->random_data, &value);
+
                 if (r < 0)
                         return r;
-                addr = htonl((random & 0x0000FFFF) | IPV4LL_NETWORK);
+#else
+                long int value = random();
+#endif
+                addr = htonl((value & 0x0000FFFF) | IPV4LL_NETWORK);
         } while (addr == ll->address ||
                 (ntohl(addr) & IPV4LL_NETMASK) != IPV4LL_NETWORK ||
                 (ntohl(addr) & 0x0000FF00) == 0x0000 ||
@@ -481,6 +489,7 @@ int sd_ipv4ll_set_address_seed (sd_ipv4ll *ll, uint8_t seed[8]) {
 
         entropy = *seed;
 
+#ifdef HAVE_RANDOM_R
         free(ll->random_data);
         free(ll->random_data_state);
 
@@ -503,6 +512,10 @@ error:
                 ll->random_data = NULL;
                 ll->random_data_state = NULL;
         }
+#else
+        srandom(entropy);
+        r = 0;
+#endif
         return r;
 }
 
@@ -535,6 +548,7 @@ int sd_ipv4ll_start (sd_ipv4ll *ll) {
         ll->defend_window = 0;
         ll->claimed_address = 0;
 
+#ifdef HAVE_RANDOM_R
         if (!ll->random_data) {
                 uint8_t seed[8];
 
@@ -546,6 +560,7 @@ int sd_ipv4ll_start (sd_ipv4ll *ll) {
                 if (r < 0)
                         goto out;
         }
+#endif
 
         if (ll->address == 0) {
                 r = ipv4ll_pick_address(ll, &ll->address);
@@ -614,8 +629,10 @@ sd_ipv4ll *sd_ipv4ll_unref(sd_ipv4ll *ll) {
 
                 sd_ipv4ll_detach_event(ll);
 
+#ifdef HAVE_RANDOM_R
                 free(ll->random_data);
                 free(ll->random_data_state);
+#endif
                 free(ll);
 
                 return NULL;

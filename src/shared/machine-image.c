@@ -30,6 +30,7 @@
 #include "mkdir.h"
 #include "rm-rf.h"
 #include "machine-image.h"
+#include <sys/file.h>
 
 static const char image_search_path[] =
         "/var/lib/machines\0"

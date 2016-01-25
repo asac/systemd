@@ -22,6 +22,7 @@
 ***/
 
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <stdbool.h>
 
 bool mac_selinux_use(void);

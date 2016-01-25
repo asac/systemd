@@ -63,6 +63,16 @@
  * properly owned directories beneath /tmp, /var/tmp, /run, which are
  * volatile and hence need to be recreated on bootup. */
 
+#ifndef GLOB_ALTDIRFUNC
+#define GLOB_ALTDIRFUNC 0
+#endif
+
+/* Don't fail if the standard library
+ * doesn't provide brace expansion */
+#ifndef GLOB_BRACE
+#define GLOB_BRACE 0
+#endif
+
 typedef enum ItemType {
         /* These ones take file names */
         CREATE_FILE = 'f',

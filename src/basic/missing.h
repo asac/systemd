@@ -132,6 +132,23 @@ static inline int pivot_root(const char *new_root, const char *put_old) {
 }
 #endif
 
+#if !HAVE_DECL_CANONICALIZE_FILE_NAME
+static inline char *canonicalize_file_name(const char *path) {
+        return realpath(path, NULL);
+}
+#endif
+
+#if !HAVE_DECL_STRNDUPA
+#define strndupa(s, n) \
+  ({ \
+    const char *__old = (s); \
+    size_t __len = strnlen(__old, (n)); \
+    char *__new = (char *)alloca(__len + 1); \
+    __new[__len] = '\0'; \
+    (char *)memcpy(__new, __old, __len); \
+  })
+#endif
+
 #ifndef __NR_memfd_create
 #  if defined __x86_64__
 #    define __NR_memfd_create 319
@@ -559,13 +576,14 @@ static inline int name_to_handle_at(int fd, const char *name, struct file_handle
         return syscall(__NR_name_to_handle_at, fd, name, handle, mnt_id, flags);
 }
 #endif
-
-#ifndef HAVE_SECURE_GETENV
+#ifdef HAVE_SECURE_GETENV
 #  ifdef HAVE___SECURE_GETENV
 #    define secure_getenv __secure_getenv
 #  else
 #    error "neither secure_getenv nor __secure_getenv are available"
 #  endif
+#else
+#  define secure_getenv getenv
 #endif
 
 #ifndef CIFS_MAGIC_NUMBER
@@ -1022,6 +1040,11 @@ static inline int renameat2(int oldfd, const char *oldname, int newfd, const cha
 static inline int kcmp(pid_t pid1, pid_t pid2, int type, unsigned long idx1, unsigned long idx2) {
         return syscall(__NR_kcmp, pid1, pid2, type, idx1, idx2);
 }
+#endif
+
+#ifndef __COMPAR_FN_T
+#define __COMPAR_FN_T
+typedef int (*__compar_fn_t)(const void *, const void *);
 #endif
 
 #ifndef KCMP_FILE

@@ -26,6 +26,7 @@
 #include <linux/ppp-ioctl.h>
 #include <net/if.h>
 #include <netinet/in.h>
+#include <netinet/ether.h>
 #include <linux/if_pppox.h>
 
 #include "sd-pppoe.h"

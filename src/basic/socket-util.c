@@ -37,6 +37,16 @@
 #include "fileio.h"
 #include "formats-util.h"
 
+/* Don't fail if the standard library
+ * doesn't support IDN */
+#ifndef NI_IDN
+#define NI_IDN 0
+#endif
+
+#ifndef NI_IDN_USE_STD3_ASCII_RULES
+#define NI_IDN_USE_STD3_ASCII_RULES 0
+#endif
+
 int socket_address_parse(SocketAddress *a, const char *s) {
         char *e, *n;
         unsigned u;
